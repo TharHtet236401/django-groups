@@ -53,6 +53,18 @@
                                 <div class="text-danger">{{ form.password2.errors }}</div>
                             {% endif %}
                         </div>
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">Select Role</option>
+                                {% for group_name in group_names %}
+                                    <option value="{{ group_name }}">{{ group_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="role"><i class="fas fa-user-tag me-2"></i>Role</label>
+                            {% if form.role.errors %}
+                                <div class="text-danger">{{ form.role.errors }}</div>
+                            {% endif %}
+                        </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>Register

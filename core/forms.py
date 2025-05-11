@@ -2,6 +2,12 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import MinLengthValidator
+from django.contrib.auth.models import Group
+
+ROLE_CHOICES = (
+    ('Salesperson', 'Salesperson'),
+    ('ProductManager', 'Product Manager'),
+)
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -39,10 +45,11 @@ class UserRegistrationForm(forms.ModelForm):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
+    role = forms.ChoiceField(choices=ROLE_CHOICES)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2']
+        fields = ['username', 'email', 'password', 'password2', 'role']
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -65,6 +72,9 @@ class UserRegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
+        selected_role = self.cleaned_data['role']
+        group = Group.objects.get(name=selected_role)
+        user.groups.add(group)
         if commit:
             user.save()
         return user

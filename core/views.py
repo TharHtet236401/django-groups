@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm
+from django.contrib.auth.models import Group
 
 @login_required
 def home_view(request):
@@ -49,6 +50,7 @@ def logout_view(request):
 def register_view(request):
     try:
         form = UserRegistrationForm()
+        group_names = Group.objects.values_list('name', flat=True)
         if request.method == 'POST':
             form = UserRegistrationForm(request.POST)
             if form.is_valid():
@@ -57,7 +59,7 @@ def register_view(request):
                 return redirect('login')
             else:
                 messages.error(request, 'Invalid form data. Please check your input.')
-        return render(request, 'core/register.html', {'form': form})
+        return render(request, 'core/register.html', {'form': form, 'group_names': group_names})
     except Exception as e:
         messages.error(request, f'Error during registration: {str(e)}')
         return render(request, 'core/register.html', {'error': str(e)})
