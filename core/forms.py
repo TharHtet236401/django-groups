@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import Group
-from .models import Product
+from .models import Product, Sale
 from .currency import CURRENCY_CHOICES
 
 ROLE_CHOICES = (
@@ -140,3 +140,40 @@ class ProductForm(forms.ModelForm):
     
     
     
+class SaleForm(forms.ModelForm):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select a product'
+        })
+    )
+    quantity = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter quantity',
+            'min': '1'
+        })
+    )
+
+    class Meta:
+        model = Sale
+        fields = ['product', 'quantity']
+
+    def clean_product(self):
+        product = self.cleaned_data['product']
+        if product is None:
+            raise forms.ValidationError('Product is required.')
+        return product
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+        if quantity <= 0:
+            raise forms.ValidationError('Quantity must be greater than 0.')
+        return quantity
+
+
+
+
+

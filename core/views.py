@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, ProductForm
+from .forms import UserRegistrationForm, ProductForm, SaleForm
 from django.contrib.auth.models import Group
 
 @login_required
@@ -82,4 +82,26 @@ def add_product_view(request):
     except Exception as e:
         messages.error(request, f'Error adding product: {str(e)}')
         return render(request, 'core/add_product.html', {'form': ProductForm()})
+
+@permission_required('core.add_sale', raise_exception=True)
+def add_sale_view(request):
+    try:
+        if request.method == 'POST':
+            form = SaleForm(request.POST)
+            if form.is_valid():
+                sale = form.save(commit=False)
+                sale.sold_by = request.user
+                sale.save()
+                # Calculate total price
+                total_price = sale.product.price * sale.quantity
+                messages.success(request, f'Sale created successfully! Total: {sale.product.currency} {total_price:.2f}')
+                return redirect('sales')
+            else:
+                messages.error(request, 'Invalid form data. Please check your input.')
+        else:
+            form = SaleForm()
+        return render(request, 'core/add_sale.html', {'form': form})
+    except Exception as e:
+        messages.error(request, f'Error creating sale: {str(e)}')
+        return render(request, 'core/add_sale.html', {'form': SaleForm()})
 
