@@ -12,12 +12,15 @@ from .forms import UserRegistrationForm
 def home_view(request):
     return render(request, 'core/home.html')
 
-@login_required
+
+@permission_required('core.view_sale', raise_exception=True)
 def sales_view(request):
     sales = Sale.objects.all()
     return render(request, 'core/sales.html', {'sales': sales})
 
-@login_required
+
+
+@permission_required('core.view_product', raise_exception=True)
 def product_view(request):
     products = Product.objects.all()
     return render(request, 'core/products.html', {'products': products})
