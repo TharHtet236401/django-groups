@@ -72,11 +72,11 @@ class UserRegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
-        selected_role = self.cleaned_data['role']
-        group = Group.objects.get(name=selected_role)
-        user.groups.add(group)
         if commit:
             user.save()
+            selected_role = self.cleaned_data['role']
+            group = Group.objects.get(name=selected_role)
+            user.groups.add(group)
         return user
         
     
