@@ -84,6 +84,22 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter product name',
+            'autocomplete': 'off'
+        })
+    )
+    price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter product price',
+            'min': '0.01',
+            'step': '0.01'
+        })
+    )
+
     class Meta:
         model = Product
         fields = ['name', 'price']
