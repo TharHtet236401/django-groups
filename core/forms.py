@@ -10,6 +10,19 @@ ROLE_CHOICES = (
     ('ProductManager', 'Product Manager'),
 )
 
+CURRENCY_CHOICES = (
+    ('USD', 'USD'),
+    ('EUR', 'EUR'),
+    ('GBP', 'GBP'),
+    ('JPY', 'JPY'),
+    ('AUD', 'AUD'),
+    ('CAD', 'CAD'),
+    ('CHF', 'CHF'),
+    ('CNY', 'CNY'),
+    ('SEK', 'SEK'),
+    ('NZD', 'NZD'),
+)
+
 class LoginForm(forms.Form):
     username = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -97,12 +110,27 @@ class ProductForm(forms.ModelForm):
             'placeholder': 'Enter product price',
             'min': '0.01',
             'step': '0.01'
+        }),
+        decimal_places=2,
+        max_digits=10
+    )
+    currency = forms.ChoiceField(
+        choices=CURRENCY_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select currency'
         })
     )
 
     class Meta:
         model = Product
-        fields = ['name', 'price']
+        fields = ['name', 'price', 'currency']
+
+    def clean_price(self):
+        price = self.cleaned_data['price']
+        if price <= 0:
+            raise forms.ValidationError('Price must be greater than 0.')
+        return price
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -112,12 +140,6 @@ class ProductForm(forms.ModelForm):
         if qs.exists():
             raise forms.ValidationError('Product already exists.')
         return name
-
-    def clean_price(self):
-        price = self.cleaned_data['price']
-        if price <= 0:
-            raise forms.ValidationError('Price must be greater than 0.')
-        return price
 
     def save(self, commit=True):
         product = super().save(commit=False)

@@ -64,6 +64,8 @@ def register_view(request):
         messages.error(request, f'Error during registration: {str(e)}')
         return render(request, 'core/register.html', {'error': str(e)})
     
+
+@permission_required('core.add_product', raise_exception=True)
 def add_product_view(request):
     try:
         if request.method == 'POST':
