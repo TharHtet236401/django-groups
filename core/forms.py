@@ -9,6 +9,7 @@ from .currency import CURRENCY_CHOICES
 ROLE_CHOICES = (
     ('Salesperson', 'Salesperson'),
     ('ProductManager', 'Product Manager'),
+    ('Marketing', 'Marketing'),
 )
 
 
