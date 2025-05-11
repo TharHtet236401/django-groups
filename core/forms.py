@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import Group
+from .models import Product
 
 ROLE_CHOICES = (
     ('Salesperson', 'Salesperson'),
@@ -82,4 +83,32 @@ class UserRegistrationForm(forms.ModelForm):
     
 
 
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'price']
 
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        qs = Product.objects.filter(name=name)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Product already exists.')
+        return name
+
+    def clean_price(self):
+        price = self.cleaned_data['price']
+        if price <= 0:
+            raise forms.ValidationError('Price must be greater than 0.')
+        return price
+
+    def save(self, commit=True):
+        product = super().save(commit=False)
+        if commit:
+            product.save()
+        return product
+
+    
+    
+    

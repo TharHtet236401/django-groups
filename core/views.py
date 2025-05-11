@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ProductForm
 from django.contrib.auth.models import Group
 
 @login_required
@@ -63,3 +63,21 @@ def register_view(request):
     except Exception as e:
         messages.error(request, f'Error during registration: {str(e)}')
         return render(request, 'core/register.html', {'error': str(e)})
+    
+def add_product_view(request):
+    try:
+        if request.method == 'POST':
+            form = ProductForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Product added successfully!')
+                return redirect('products')
+            else:
+                messages.error(request, 'Invalid form data. Please check your input.')
+        else:
+            form = ProductForm()
+        return render(request, 'core/add_product.html', {'form': form})
+    except Exception as e:
+        messages.error(request, f'Error adding product: {str(e)}')
+        return render(request, 'core/add_product.html', {'form': ProductForm()})
+
