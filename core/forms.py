@@ -4,24 +4,13 @@ from django.contrib.auth import authenticate
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import Group
 from .models import Product
+from .currency import CURRENCY_CHOICES
 
 ROLE_CHOICES = (
     ('Salesperson', 'Salesperson'),
     ('ProductManager', 'Product Manager'),
 )
 
-CURRENCY_CHOICES = (
-    ('USD', 'USD'),
-    ('EUR', 'EUR'),
-    ('GBP', 'GBP'),
-    ('JPY', 'JPY'),
-    ('AUD', 'AUD'),
-    ('CAD', 'CAD'),
-    ('CHF', 'CHF'),
-    ('CNY', 'CNY'),
-    ('SEK', 'SEK'),
-    ('NZD', 'NZD'),
-)
 
 class LoginForm(forms.Form):
     username = forms.CharField(

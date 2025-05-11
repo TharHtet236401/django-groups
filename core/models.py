@@ -2,19 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from .currency import CURRENCY_CHOICES
 
-CURRENCY_CHOICES = (
-    ('USD', 'USD'),
-    ('EUR', 'EUR'),
-    ('GBP', 'GBP'),
-    ('JPY', 'JPY'),
-    ('AUD', 'AUD'),
-    ('CAD', 'CAD'),
-    ('CHF', 'CHF'),
-    ('CNY', 'CNY'),
-    ('SEK', 'SEK'),
-    ('NZD', 'NZD'),
-)
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
