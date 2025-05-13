@@ -106,14 +106,17 @@ def add_sale_view(request):
         return render(request, 'core/add_sale.html', {'form': SaleForm()})
 
 
-
+@login_required
 def task_view(request):
-    if request.user.is_superuser:
-        tasks = Task.objects.all()
+    try:
+        if request.user.is_superuser:
+            tasks = Task.objects.select_related('assigned_to').all()
+        else:
+            tasks = Task.objects.select_related('assigned_to').filter(assigned_to=request.user)
         return render(request, 'core/tasks.html', {'tasks': tasks})
-    else:
-        tasks = Task.objects.filter(assigned_to=request.user)
-        return render(request, 'core/tasks.html', {'tasks': tasks})
+    except Exception as e:
+        # Optionally, log the error here
+        return render(request, 'core/tasks.html', {'tasks': [], 'error': f"An error occurred: {str(e)}"})
 
 
 
