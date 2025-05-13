@@ -3,14 +3,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import Group
-from .models import Product, Sale
-from .currency import CURRENCY_CHOICES
+from .models import Product, Sale, Task
+from .lists import CURRENCY_CHOICES, TASK_TYPE_CHOICES, TASK_STATUS_CHOICES
 
 ROLE_CHOICES = (
     ('Salesperson', 'Salesperson'),
     ('ProductManager', 'Product Manager'),
     ('Marketing', 'Marketing'),
 )
+
 
 
 class LoginForm(forms.Form):
@@ -172,6 +173,78 @@ class SaleForm(forms.ModelForm):
         if quantity <= 0:
             raise forms.ValidationError('Quantity must be greater than 0.')
         return quantity
+
+
+class TaskForm(forms.ModelForm):
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter task title',
+            'autocomplete': 'off'
+        })
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter task description',
+            'rows': 4
+        }),
+        required=False
+    )
+    task_type = forms.ChoiceField(
+        choices=TASK_TYPE_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select task type'
+        })
+    )
+    task_status = forms.ChoiceField(
+        choices=TASK_STATUS_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select task status'
+        })
+    )
+    assigned_to = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select assignee'
+        })
+    )
+
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'task_type', 'task_status', 'assigned_to']
+
+    def clean_title(self):
+        try:
+            title = self.cleaned_data['title']
+            if len(title.strip()) < 3:
+                raise forms.ValidationError('Title must be at least 3 characters long.')
+            return title
+        except Exception as e:
+            raise forms.ValidationError(f'Error validating title: {str(e)}')
+
+    def clean_assigned_to(self):
+        try:
+            assigned_to = self.cleaned_data['assigned_to']
+            if assigned_to is None:
+                raise forms.ValidationError('Please select an assignee.')
+            return assigned_to
+        except Exception as e:
+            raise forms.ValidationError(f'Error validating assignee: {str(e)}')
+
+    def save(self, commit=True):
+        try:
+            task = super().save(commit=False)
+            if commit:
+                task.save()
+            return task
+        except Exception as e:
+            raise forms.ValidationError(f'Error saving task: {str(e)}')
+
+
 
 
 

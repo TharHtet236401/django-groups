@@ -1,0 +1,17 @@
+{% extends 'core/main.html' %}
+
+{% block content %}
+    <h1>Tasks</h1>
+    <ul>
+        {% if tasks %}
+            {% for task in tasks %}
+
+            <li>{{ task.title }} - {{ task.task_type }} - {{ task.task_status }}</li>
+            {% endfor %}
+        {% else %}
+            <li>No tasks found</li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+

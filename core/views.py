@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
-from .models import Sale, Product
+from .models import Sale, Product, Task
 from .forms import LoginForm
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, ProductForm, SaleForm
+from .forms import UserRegistrationForm, ProductForm, SaleForm, TaskForm
 from django.contrib.auth.models import Group
 
 @login_required
@@ -104,4 +104,13 @@ def add_sale_view(request):
     except Exception as e:
         messages.error(request, f'Error creating sale: {str(e)}')
         return render(request, 'core/add_sale.html', {'form': SaleForm()})
+
+
+
+def task_view(request):
+    tasks = Task.objects.all()
+    return render(request, 'core/tasks.html', {'tasks': tasks})
+
+
+
 
