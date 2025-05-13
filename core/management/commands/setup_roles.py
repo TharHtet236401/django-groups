@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from core.models import Product, Sale
+from core.models import Product, Sale, Task
 
 class Command(BaseCommand):
     help = 'Set up roles and permissions'
@@ -28,5 +28,16 @@ class Command(BaseCommand):
             codename__startswith='view_'
         )
         marketing_group.permissions.set(marketing_perms)
+
+        # Assign view permissions to Salesperson and ProductManager (for Task model)
+        task_view_perms = Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(Task),
+            codename='view_task'
+        )
+        salesperson_group.permissions.set(task_view_perms)
+        productmanager_group.permissions.set(task_view_perms)
+        marketing_group.permissions.set(task_view_perms)
+
+        # Assign full permissions to TaskManager (for Task model)
 
         self.stdout.write(self.style.SUCCESS('Roles and permissions set up successfully.'))

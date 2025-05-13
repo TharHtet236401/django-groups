@@ -106,7 +106,7 @@ def add_sale_view(request):
         return render(request, 'core/add_sale.html', {'form': SaleForm()})
 
 
-@login_required
+@permission_required('core.view_task', raise_exception=True)
 def task_view(request):
     try:
         if request.user.is_superuser:
