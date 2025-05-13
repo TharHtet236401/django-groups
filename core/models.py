@@ -26,7 +26,7 @@ class Task(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     task_type = models.CharField(max_length=200, choices=TASK_TYPE_CHOICES, default='Sales')
-    task_status = models.CharField(max_length=200, choices=TASK_STATUS_CHOICES, default='Pending'),
+    task_status = models.CharField(max_length=200, choices=TASK_STATUS_CHOICES, default='Pending')
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_tasks')
     assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tasks')
     created_at = models.DateTimeField(auto_now_add=True)

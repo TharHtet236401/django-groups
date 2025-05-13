@@ -108,8 +108,12 @@ def add_sale_view(request):
 
 
 def task_view(request):
-    tasks = Task.objects.all()
-    return render(request, 'core/tasks.html', {'tasks': tasks})
+    if request.user.is_superuser:
+        tasks = Task.objects.all()
+        return render(request, 'core/tasks.html', {'tasks': tasks})
+    else:
+        tasks = Task.objects.filter(assigned_to=request.user)
+        return render(request, 'core/tasks.html', {'tasks': tasks})
 
 
 
