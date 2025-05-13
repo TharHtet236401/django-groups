@@ -26,7 +26,15 @@
       {% if request.user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="">
-            <span class="badge bg-primary me-1">{{ request.user.groups.first.name|default:"User" }}</span>
+            <span class="badge bg-primary me-1">
+                {% if request.user.is_superuser %}
+                    Admin
+                {% elif request.user.groups.first %}
+                    {{ request.user.groups.first.name }}
+                {% else %}
+                    User
+                {% endif %}
+            </span>
             {{ request.user.username }}
           </a>
         </li>
