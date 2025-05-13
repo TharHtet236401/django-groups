@@ -10,7 +10,8 @@ class Command(BaseCommand):
         # Create groups
         salesperson_group, _ = Group.objects.get_or_create(name='Salesperson')
         productmanager_group, _ = Group.objects.get_or_create(name='ProductManager')
-        marketing_group, _ = Group.objects.get_or_create(name='Marketing')  # New group
+        marketing_group, _ = Group.objects.get_or_create(name='Marketing')
+
 
         # Assign full permissions to Salesperson (for Sale model)
         sale_ct = ContentType.objects.get_for_model(Sale)
